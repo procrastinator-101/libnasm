@@ -6,19 +6,19 @@ global	_ft_strdup
 
 _ft_strdup:
 	;	push to stack to preserve their values
-	push		rcx
-	push		rsi
-	push		rdi
-	call		_ft_strlen
+	;push		rcx
+	;push		rsi
+	;push		rdi
+	;call		_ft_strlen
 	;	size = len + 1
 	inc			rax
 	;	store the size in rcx to use it in copy subroutine
-	mov			rcx, rax
+	;mov			rcx, rax
 	;	pass the size to the first argument of malloc
-	mov			rdi, rax
-	call		_malloc
-	pop			rdi
-	jc			_manage_error
+	;mov			rdi, rax
+	;call		_malloc
+	;pop			rdi
+	;jc			_manage_error
 	ret
 
 _ft_strlen:
@@ -36,4 +36,4 @@ _check_end_str:
 	ret
 
 _manage_error:
-	push
+	ret
