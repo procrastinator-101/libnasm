@@ -2,12 +2,16 @@ section .text
 
 global _ft_atoi_base
 
+;int	ft_atoi_base(char *num, char *base);
+;=======================================================
 _ft_atoi_base :
 	;	preserve the necessary registers
 	;---------------------------------------------------
-	push		rdx
-	push		rcx
-	push		r8
+	push		rdx			;used for camparisons
+	push		rcx			;used as counter
+	push		r8			;used to hold base
+	push		r9			;used to hold the number to return
+	push		r10			;used to hold the index of the sign if there is one
 	;	check if str or base are null
 	;---------------------------------------------------
 	mov			rax, 0
@@ -22,68 +26,141 @@ _ft_atoi_base :
 	call		_ft_strlen
 	pop			rdi
 	mov			r8, rax
-	;	done storing base number in r8
+	;	initialising registers to be used in convert_base
 	;---------------------------------------------------
-	mov			rax, 0
 	mov			rcx, -1
+	call		_traverse_spaces	;rcx initialised to the last white space
+	mov			r10, 0
+	call		_manage_sign		;rcx incremented the sign if there is one
+	cmp			r10, -1
+	je			_quit
+	mov			r10, rcx
 	mov			rdx, 0
+	mov			r9, 0
 	call		_convert_to_base
 	;	restore the used registers
 	;---------------------------------------------------
+	pop			r9
 	pop			r8
 	pop			rcx
 	pop			rdx
+	ret
 
+_quit :
+	pop			r9
+	pop			r8
+	pop			rcx
+	pop			rdx
+	ret
 
-_convert_to_base :
+;increment the counter to the last white space
+;=======================================================
+_traverse_spaces :
 	inc			rcx
-	mov			
+	mov			dl, byte[rdi + rcx]
+	cmp			dl, 32
+	jne			_return_counter
+	cmp			dl, 8
+	jl			_return_counter
+	cmp			dl, 11
+	jg			_return_counter
+	call		_traverse_spaces
+	ret
+
+_return_counter :
+	ret
+;=======================================================
+
+;store the sign in r10 : 1 ->positive || 0 ->negative | -1 ->error
+;=======================================================
+_manage_sign :
+	mov		dl, byte[rdi + rcx]
+	cmp		dl, 43
+	je		_check_base
+	cmp		dl, 45
+	je		_check_base
+	ret
+
+_check_base :
+	cmp		r8, 10
+	je		_set_sign
+	mov		rax, 0
+	mov		r10, -1
+	ret
+
+_set_sign :
+	inc		rcx
+	ret
+;=======================================================
+
+
+;convert c to the right index and add it to ret
+;=======================================================
+_convert_to_base :
+	;	preserve the necessary registers
+	;---------------------------------------------------
+	push		rdi
+	push		rsi
+	inc			rcx
+	mov			dl, byte[rdi + rcx]
+	cmp			dl, 0
+	je			_return_result
+	mov			rdi, rsi
+	mov			rsi, rdx
+	call		_get_index
+	mov			rdi, rax
+	mov			rax, r9
+	mul			r8
+	mov			r9, rax
+	add			r9, rdi
+	;	restore the used registers
+	;---------------------------------------------------
+	pop			rsi
+	pop			rdi
+	call		_convert_to_base
+	ret
+
+_return_result:
+	pop			rsi
+	pop			rdi
+	mov			rax, r9
+	ret
+;=======================================================
 
 
 ;int	get_index(char *str, char c);
 ;=======================================================
+global _get_index
+
 _get_index :
-	push		rcx
-	push		rdx
-	mov			rcx, -1
-	mov			rdx, 0
-	call		_find_char
-	pop			rdx
-	pop			rcx
-	ret
+    push        rcx
+    push        rdx
+    mov         rcx, -1
+    mov         rdx, 0
+    call        _find_char
+    pop         rdx
+    pop         rcx
+    ret
 
 _find_char :
-	inc			rcx
-	mov			dl, byte[rdi + rcx]
-	cmp			dl, 0
-	je			_return_index_error
-	cmp			dl, byte[rsi]
-	je			_return_index
-	call		_find_char
-	ret
+    inc         rcx
+    mov         dl, byte[rdi + rcx]
+    cmp         dl, sil
+    je          _return_index
+    cmp         dl, 0
+    je          _return_index_error
+    call        _find_char
+    ret
 
 _return_index :
-	mov			rax, rcx
-	ret
+    mov         rax, rcx
+    ret
 
 _return_index_error :
-	mov			rax, -1
-	ret
+    mov         rax, -1
+    ret
 ;=======================================================
 
-
-;	subroutines for math calculations
-;=======================================================
-_ft_mul :
-	mov		rax, rdi
-	mul		rsi
-	ret
-
-_ft_add :
-	mov		rax, rdi
-	add		rax, rsi
-	ret
-;=======================================================
 
 ;	ft_strlen : to get the base
 ;=======================================================
@@ -102,8 +179,3 @@ _check_end_str:
 	ret
 ;=======================================================
 
-_quit :
-	pop			rcx
-	pop			rdx
-	pop			r8
-	ret
