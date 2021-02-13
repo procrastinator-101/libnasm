@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/13 17:25:53 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/13 19:20:42 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int main()
 	//printf("ret = %lu\n", ft_read(0, ptr, 15));
 	//printf("p = %p\n", ft_strdup(str));
 
-	printf("ret = %d\n", ft_atoi_base("-102365400", "0123456789"));
+	printf("ret = %d\n", ft_atoi_base("-102365400", "0123456789a"));
 	printf("error = %s\n", strerror(errno));
 
 	return (0);

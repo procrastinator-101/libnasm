@@ -29,17 +29,20 @@ _ft_atoi_base :
 	;	initialising registers to be used in convert_base
 	;---------------------------------------------------
 	mov			rcx, -1
-	call		_traverse_spaces	;rcx initialised to the last white space
+	mov			rdx, 0
+	call		_traverse_white_spaces	;rcx initialised to the last white space
 	mov			r10, 0
-	call		_manage_sign		;rcx incremented the sign if there is one
+	call		_manage_sign			;rcx incremented the sign if there is one
 	cmp			r10, -1
 	je			_quit
 	mov			r10, rcx
-	mov			rdx, 0
 	mov			r9, 0
 	call		_convert_to_base
 	;	restore the used registers
 	;---------------------------------------------------
+	;call		_quit
+	;ret
+	pop			r10
 	pop			r9
 	pop			r8
 	pop			rcx
@@ -47,6 +50,7 @@ _ft_atoi_base :
 	ret
 
 _quit :
+	pop			r10
 	pop			r9
 	pop			r8
 	pop			rcx
@@ -55,16 +59,20 @@ _quit :
 
 ;increment the counter to the last white space
 ;=======================================================
-_traverse_spaces :
+_traverse_white_spaces :
 	inc			rcx
 	mov			dl, byte[rdi + rcx]
+	cmp			dl, 7
+	jg			_check_tabs
+	call		_traverse_white_spaces
+	ret
+
+_check_tabs :
+	cmp			dl, 12
+	jl			_traverse_white_spaces
 	cmp			dl, 32
 	jne			_return_counter
-	cmp			dl, 8
-	jl			_return_counter
-	cmp			dl, 11
-	jg			_return_counter
-	call		_traverse_spaces
+	call		_traverse_white_spaces
 	ret
 
 _return_counter :
