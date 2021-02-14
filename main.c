@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/13 19:20:42 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/14 16:21:16 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,25 @@ char	*ft_strdup(const char *s1);
 int		ft_atoi_base(char *str, char *base);
 int		get_index(char *str, char c);
 
+int		handle_sign(char *c);
+
+int		check_base(char *base);
+
 int main()
 {
 	char	str[] = "hello world!!!\n";
 	char	str2[] = "HELLO world!!!\n";
 
-	char	ptr[20];
 
 	//printf("ret = %lu\n", read(1, ptr, 15));
 	//printf("ret = %lu\n", ft_read(0, ptr, 15));
 	//printf("p = %p\n", ft_strdup(str));
 
-	printf("ret = %d\n", ft_atoi_base("-102365400", "0123456789a"));
+	//printf("ret = %d\n", ft_atoi_base("102365400", "0123456789"));
+	char base[] = "012.";
+
+	printf("ret = %d\n", check_base(base));
+	printf("len = %lu\n", strlen(base));
 	printf("error = %s\n", strerror(errno));
 
 	return (0);

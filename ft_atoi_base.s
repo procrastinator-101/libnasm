@@ -5,29 +5,33 @@ global _ft_atoi_base
 ;int	ft_atoi_base(char *num, char *base);
 ;=======================================================
 _ft_atoi_base :
-	;	preserve the necessary registers
-	;---------------------------------------------------
-	push		rdx			;used for camparisons
-	push		rcx			;used as counter
+;	preserve the necessary registers
+;---------------------------------------------------
 	push		r8			;used to hold base
 	push		r9			;used to hold the number to return
 	push		r10			;used to hold the index of the sign if there is one
-	;	check if str or base are null
-	;---------------------------------------------------
-	mov			rax, 0
+;	check if str or base are null
+;---------------------------------------------------
 	cmp			rdi, 0
-	je			_quit
+	je			_manage_error
 	cmp			rsi, 0
-	je			_quit
-	;	get base number and store it in r8
-	;---------------------------------------------------
+	je			_manage_error
+;	get base number and store it in r8
+;---------------------------------------------------
 	push		rdi
 	mov			rdi, rsi
 	call		_ft_strlen
 	pop			rdi
 	mov			r8, rax
-	;	initialising registers to be used in convert_base
-	;---------------------------------------------------
+;	check if base is empty or of size 1
+;---------------------------------------------------
+	cmp			r8, 2
+	jl			_manage_error
+;	check if base has the same character twice , '-' or '+'
+;---------------------------------------------------
+	
+;	initialising registers to be used in convert_base
+;---------------------------------------------------
 	mov			rcx, -1
 	mov			rdx, 0
 	call		_traverse_white_spaces	;rcx initialised to the last white space
@@ -38,24 +42,22 @@ _ft_atoi_base :
 	mov			r10, rcx
 	mov			r9, 0
 	call		_convert_to_base
-	;	restore the used registers
-	;---------------------------------------------------
-	;call		_quit
-	;ret
-	pop			r10
-	pop			r9
-	pop			r8
-	pop			rcx
-	pop			rdx
-	ret
 
+;	restore the used registers and return
+;---------------------------------------------------
 _quit :
 	pop			r10
 	pop			r9
 	pop			r8
-	pop			rcx
-	pop			rdx
 	ret
+
+_manage_error :
+	mov			rax, 0
+	pop			r10
+	pop			r9
+	pop			r8
+	ret
+
 
 ;increment the counter to the last white space
 ;=======================================================
