@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/14 16:24:40 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/14 17:25:14 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ char	*ft_strcpy(const char *dst, const char *src);
 char	*ft_strdup(const char *s1);
 
 int		ft_atoi_base(char *str, char *base);
-int		get_index(char *str, char c);
-
-int		handle_sign(char *c);
 
 int		check_base(char *base);
+int		get_index(char *str, char c);
+
+int    traverse_white_spaces(char *str, int start);
 
 int main()
 {
@@ -43,10 +43,13 @@ int main()
 	//printf("p = %p\n", ft_strdup(str));
 
 	//printf("ret = %d\n", ft_atoi_base("102365400", "0123456789"));
-	char base[] = "203";
+	int		index;
+	char	base[] = "   \t \n \n \t \v \t \n\n\n\t\t\v\v	\r\r\r   \t   203";
 
-	printf("ret = %d\n", check_base(base));
-	printf("len = %lu\n", strlen(base));
+	index = 1;
+	index = traverse_white_spaces(base, index);
+	printf("ret = %d\n", index);
+	printf("c = %c\n", base[index]);
 	printf("error = %s\n", strerror(errno));
 
 	return (0);
