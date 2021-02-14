@@ -3,48 +3,50 @@ section .text
 global _ft_atoi_base
 
 ;int	ft_atoi_base(char *num, char *base);
-;=======================================================
+;======================================================================
 _ft_atoi_base :
 ;	preserve the necessary registers
-;---------------------------------------------------
-	push		r8			;used to hold base
+;----------------------------------------------------------------------
+	push		r8			;used to hold base number
 	push		r9			;used to hold the number to return
 	push		r10			;used to hold the index of the sign if there is one
+;----------------------------------------------------------------------
+
 ;	check if str or base are null
-;---------------------------------------------------
+;----------------------------------------------------------------------
 	cmp			rdi, 0
 	je			_manage_error
 	cmp			rsi, 0
 	je			_manage_error
-;	get base number and store it in r8
-;---------------------------------------------------
+;----------------------------------------------------------------------
+
+;	check if base has the same character twice , '-' or '+'
+;	and store the base number in r8
+;----------------------------------------------------------------------
 	push		rdi
 	mov			rdi, rsi
-	call		_ft_strlen
+	call		_check_base
 	pop			rdi
+	cmp			rax, -1
+	je			_manage_error
 	mov			r8, rax
-;	check if base is empty or of size 1
-;---------------------------------------------------
-	cmp			r8, 2
-	jl			_manage_error
-;	check if base has the same character twice , '-' or '+'
-;---------------------------------------------------
+;----------------------------------------------------------------------
 	
-;	initialising registers to be used in convert_base
-;---------------------------------------------------
-	mov			rcx, -1
-	mov			rdx, 0
-	call		_traverse_white_spaces	;rcx initialised to the last white space
+;	traverse white spaces and store the sign in r10
+;----------------------------------------------------------------------
+	call		_traverse_white_spaces
 	mov			r10, 0
 	call		_manage_sign			;rcx incremented the sign if there is one
 	cmp			r10, -1
 	je			_quit
 	mov			r10, rcx
 	mov			r9, 0
+;----------------------------------------------------------------------
+
 	call		_convert_to_base
 
 ;	restore the used registers and return
-;---------------------------------------------------
+;----------------------------------------------------------------------
 _quit :
 	pop			r10
 	pop			r9
@@ -57,32 +59,11 @@ _manage_error :
 	pop			r9
 	pop			r8
 	ret
+;======================================================================
 
-
-;increment the counter to the last white space
-;=======================================================
-_traverse_white_spaces :
-	inc			rcx
-	mov			dl, byte[rdi + rcx]
-	cmp			dl, 7
-	jg			_check_tabs
-	call		_traverse_white_spaces
-	ret
-
-_check_tabs :
-	cmp			dl, 12
-	jl			_traverse_white_spaces
-	cmp			dl, 32
-	jne			_return_counter
-	call		_traverse_white_spaces
-	ret
-
-_return_counter :
-	ret
-;=======================================================
 
 ;store the sign in r10 : 1 ->positive || 0 ->negative | -1 ->error
-;=======================================================
+;======================================================================
 _manage_sign :
 	mov		dl, byte[rdi + rcx]
 	cmp		dl, 43
@@ -101,16 +82,18 @@ _check_base :
 _set_sign :
 	inc		rcx
 	ret
-;=======================================================
+;======================================================================
 
 
 ;convert c to the right index and add it to ret
-;=======================================================
+;======================================================================
 _convert_to_base :
-	;	preserve the necessary registers
-	;---------------------------------------------------
+;	preserve the necessary registers
+;----------------------------------------------------------------------
 	push		rdi
 	push		rsi
+;----------------------------------------------------------------------
+
 	inc			rcx
 	mov			dl, byte[rdi + rcx]
 	cmp			dl, 0
@@ -123,23 +106,24 @@ _convert_to_base :
 	mul			r8
 	mov			r9, rax
 	add			r9, rdi
-	;	restore the used registers
-	;---------------------------------------------------
+
+;	restore the used registers
+;----------------------------------------------------------------------
 	pop			rsi
 	pop			rdi
 	call		_convert_to_base
 	ret
+;----------------------------------------------------------------------
 
 _return_result:
 	pop			rsi
 	pop			rdi
 	mov			rax, r9
 	ret
-;=======================================================
-
+;======================================================================
 
 ;int	get_index(char *str, char c);
-;=======================================================
+;======================================================================
 global _get_index
 
 _get_index :
@@ -169,23 +153,64 @@ _return_index :
 _return_index_error :
     mov         rax, -1
     ret
-;=======================================================
+;======================================================================
 
 
-;	ft_strlen : to get the base
-;=======================================================
-_ft_strlen:
-	mov			rax, -1
-	push		rdx
-	call		_check_end_str
-	pop			rdx
+;int	check_base(char *base)
+;returns -1 if base is invalid, otherwise it length(base number)
+;======================================================================
+_check_base :
+	mov			rcx, -1
+	mov			rdx, 0
+	call		_check_base__body
 	ret
 
-_check_end_str:
-	inc			rax
-	mov			dl, byte[rdi + rax]
+_check_base__body :
+	inc			rcx
+	mov			dl, byte[rdi + rcx]
 	cmp			dl, 0
-	jne			_check_end_str
+	je			_check_base_size
+	cmp			dl, 43
+	je			_invalid_base
+	cmp			dl, 45
+	je			_invalid_base
+	push		rcx
+	mov			rax, 0
+	call		_check_repetitiveness
+	pop			rcx
+	cmp			rax, 1
+	je			_invalid_base
+	call		_check_base__body
 	ret
-;=======================================================
 
+_check_base_size :
+	cmp			rcx, 2
+	jl			_invalid_base
+	mov			rax, rcx
+	ret
+
+_invalid_base :
+	mov			rax, -1
+	ret
+
+
+;int	check_repetitiveness(char *base + start)
+;returns 1 if base[start] appears twice | 0 otherwise
+;======================================================================
+_check_repetitiveness :
+	inc			rcx
+	mov			al, byte[rdi + rcx]
+	cmp			al, 0
+	je			_uniq_character
+	cmp			dl, al
+	je			_repetitive_character
+	call		_check_repetitiveness
+	ret
+
+_uniq_character :
+	mov			rax, 0
+	ret
+
+_repetitive_character :
+	mov			rax, 1
+	ret

@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/14 16:21:16 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/14 16:24:40 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int main()
 	//printf("p = %p\n", ft_strdup(str));
 
 	//printf("ret = %d\n", ft_atoi_base("102365400", "0123456789"));
-	char base[] = "012.";
+	char base[] = "203";
 
 	printf("ret = %d\n", check_base(base));
 	printf("len = %lu\n", strlen(base));
