@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/14 17:25:14 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/14 19:19:24 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ int		ft_atoi_base(char *str, char *base);
 int		check_base(char *base);
 int		get_index(char *str, char c);
 
-int    traverse_white_spaces(char *str, int start);
+int		traverse_white_spaces(char *str, int start);
+int		convert_to_base(char *str, char *base);
 
 int main()
 {
@@ -42,15 +43,16 @@ int main()
 	//printf("ret = %lu\n", ft_read(0, ptr, 15));
 	//printf("p = %p\n", ft_strdup(str));
 
-	//printf("ret = %d\n", ft_atoi_base("102365400", "0123456789"));
-	int		index;
-	char	base[] = "   \t \n \n \t \v \t \n\n\n\t\t\v\v	\r\r\r   \t   203";
+	printf("ret = %d\n", ft_atoi_base("        \v\t\n\r   	102365400", "0123456789"));
 
-	index = 1;
-	index = traverse_white_spaces(base, index);
-	printf("ret = %d\n", index);
+	//printf("ret = %d\n", convert_to_base("12459973", "0123456789"));
+	
+	/*
+	char	base[] = "0123456789";
+	int		index = get_index(base, '6');
+	printf("index = %d\n", index);
 	printf("c = %c\n", base[index]);
 	printf("error = %s\n", strerror(errno));
-
+	*/
 	return (0);
 }

@@ -44,8 +44,13 @@ _ft_atoi_base :
 
 ;	start the conversion
 ;----------------------------------------------------------------------
-
+	mov			r9, 0
+	mov			rcx, r10
 	call		_convert_to_base
+;----------------------------------------------------------------------
+
+;	set the sign
+;----------------------------------------------------------------------
 
 ;	restore the used registers and return
 ;----------------------------------------------------------------------
@@ -66,53 +71,77 @@ _manage_error :
 
 ;convert c to the right index and add it to ret
 ;======================================================================
-_convert_to_base :
-;	preserve the necessary registers
+_convert_to_base:
+;	reserve registers
 ;----------------------------------------------------------------------
-	push		rdi
-	push		rsi
+	push			rcx
+	push			rdi
+	push			rsi
 ;----------------------------------------------------------------------
 
-	inc			rcx
-	mov			dl, byte[rdi + rcx]
-	cmp			dl, 0
-	je			_return_result
-	mov			rdi, rsi
-	mov			rsi, rdx
-	call		_get_index
-	mov			rdi, rax
-	mov			rax, r9
-	mul			r8
-	mov			r9, rax
-	add			r9, rdi
-
-;	restore the used registers
+;	getting the index of str[rcx]
 ;----------------------------------------------------------------------
-	pop			rsi
-	pop			rdi
-	call		_convert_to_base
+	movzx			rdx, byte[rdi + rcx]
+	cmp				dl, 0
+	je				_return_converted_base
+	mov				rdi, rsi
+	mov				rsi, rdx
+	call			_get_index
+	cmp				rax, -1
+	je				_manage_conv_base_error
+;----------------------------------------------------------------------
+
+;	ret = ret * B + index
+;----------------------------------------------------------------------
+	mov				rdi, rax
+	mov				rax, r9
+	mul				r8
+	mov				r9, rax
+	add				r9, rdi
+;----------------------------------------------------------------------
+
+;	restore used registers
+;----------------------------------------------------------------------
+	pop				rsi
+	pop				rdi
+	pop				rcx
+;----------------------------------------------------------------------
+
+	inc				rcx
+	call			_convert_to_base
 	ret
 ;----------------------------------------------------------------------
 
-_return_result:
-	pop			rsi
-	pop			rdi
+
+_return_converted_base :
+;	set rax to the return value and quit
+;----------------------------------------------------------------------
 	mov			rax, r9
-	ret
+    pop         rsi
+    pop         rdi
+    pop         rcx
+    ret
+;----------------------------------------------------------------------
+
+
+_manage_conv_base_error :
+;	set return value to 0 and quit
+;----------------------------------------------------------------------
+    mov         rax, 0
+    pop         rsi
+    pop         rdi
+    pop         rcx
+    ret
 ;======================================================================
+
 
 ;int	get_index(char *str, char c);
 ;======================================================================
-global _get_index
 
 _get_index :
-    push        rcx
-    push        rdx
     mov         rcx, -1
     mov         rdx, 0
     call        _find_char
-    pop         rdx
-    pop         rcx
     ret
 
 _find_char :
@@ -133,7 +162,6 @@ _return_index_error :
     mov         rax, -1
     ret
 ;======================================================================
-
 
 ;int	check_base(char *base)
 ;returns -1 if base is invalid, otherwise it length(base number)
