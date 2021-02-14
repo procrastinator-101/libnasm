@@ -9,7 +9,8 @@ _ft_atoi_base :
 ;----------------------------------------------------------------------
 	push		r8			;used to hold base number
 	push		r9			;used to hold the number to return
-	push		r10			;used to hold the index of the sign if there is one
+	push		r10			;used to hold the index where the sign is 
+							;supposed to be
 ;----------------------------------------------------------------------
 
 ;	check if str or base are null
@@ -32,15 +33,16 @@ _ft_atoi_base :
 	mov			r8, rax
 ;----------------------------------------------------------------------
 	
-;	traverse white spaces and store the sign in r10
+;	traverse white spaces
 ;----------------------------------------------------------------------
+	push		rsi
+	mov			rsi, 0
 	call		_traverse_white_spaces
-	mov			r10, 0
-	call		_manage_sign			;rcx incremented the sign if there is one
-	cmp			r10, -1
-	je			_quit
-	mov			r10, rcx
-	mov			r9, 0
+	pop			rsi
+	mov			r10, rax
+;----------------------------------------------------------------------
+
+;	start the conversion
 ;----------------------------------------------------------------------
 
 	call		_convert_to_base
@@ -58,29 +60,6 @@ _manage_error :
 	pop			r10
 	pop			r9
 	pop			r8
-	ret
-;======================================================================
-
-
-;store the sign in r10 : 1 ->positive || 0 ->negative | -1 ->error
-;======================================================================
-_manage_sign :
-	mov		dl, byte[rdi + rcx]
-	cmp		dl, 43
-	je		_check_base
-	cmp		dl, 45
-	je		_check_base
-	ret
-
-_check_base :
-	cmp		r8, 10
-	je		_set_sign
-	mov		rax, 0
-	mov		r10, -1
-	ret
-
-_set_sign :
-	inc		rcx
 	ret
 ;======================================================================
 
@@ -214,3 +193,42 @@ _uniq_character :
 _repetitive_character :
 	mov			rax, 1
 	ret
+;======================================================================
+
+
+;int	traverse_white_spaces(char *str, int start)
+;returns (the index of the last white space) + 1
+;======================================================================
+_traverse_white_spaces :
+	mov			rdx, 0
+	mov			rcx, rsi
+	dec			rcx
+	call		_traverse_white_spaces__body
+	ret
+
+_traverse_white_spaces__body :
+	inc			rcx
+	mov			dl, byte[rdi + rcx]
+	cmp			dl, 0
+	je			_return_counter
+	cmp			dl, 32
+	jne			_check_other_white_spaces
+	call		_traverse_white_spaces__body
+	ret
+
+_check_other_white_spaces :
+	cmp			dl, 8
+	jg			_check_upper_bound
+	call		_return_counter
+	ret
+
+_check_upper_bound :
+	cmp			dl, 13
+	jg			_return_counter
+	call		_traverse_white_spaces__body
+	ret
+
+_return_counter :
+	mov			rax, rcx
+	ret
+;======================================================================
