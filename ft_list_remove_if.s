@@ -1,3 +1,5 @@
+extern _free
+
 section .text
 
 global _ft_list_remove_if
@@ -15,7 +17,11 @@ _ft_list_remove_if :
 
 ;
 ;----------------------------------------------------------------------
-	mov			rcx, [rdi]
+	push		rdi
+	push		r12
+	push		r13
+	mov			r12, rdx
+	mov			r13, [rdi]
 ;----------------------------------------------------------------------
 _quit :
 	ret
@@ -23,18 +29,32 @@ _quit :
 ;======================================================================
 
 _find_and_remove :
-;allocate memory to use as temporary regiter holder
 ;----------------------------------------------------------------------
-	sub			rsp, 40
-	mov			[rsp + 32], rdi
-	mov			[rsp + 24], rsi
-	mov			[rsp + 16], rdx
-	mov			[rsp + 8], rcx
-	mov			[rsp], r8
+	push		r13
+	cmp			r13, 0
+	je			_return
 ;----------------------------------------------------------------------
 
-	mov			rdi, [rcx + 8]
-	mov			rsi, [rsp + 24]
-	call		[rsp + 16]
-	cmp			rax, 1
+	mov			rdi, [r13]
+	call		r12
+	cmp			rax, 0
+	je			_remove_elem
+
+_return :
+	ret
+;======================================================================
+
+
+;void	remove_elem(t_list *previous, t_list *elem);
+;======================================================================
+_remove_elem :
+	mov			rdx, qword [rsi + 8]
+	mov			[rdi + 8], rdx
+	push		rdi
+	mov			rdi, rsi
+	call		_free
+	pop			rdi
+	ret
+;======================================================================
+	
 
