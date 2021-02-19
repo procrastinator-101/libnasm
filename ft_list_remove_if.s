@@ -1,10 +1,10 @@
 section .text
 
-global ft_list_remove_if
+global _ft_list_remove_if
 
 ;void ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)());
 ;======================================================================
-ft_list_remove_if :
+_ft_list_remove_if :
 ;	check if begin_list and cmp are null
 ;----------------------------------------------------------------------
 	cmp			rdi, 0
@@ -17,6 +17,9 @@ ft_list_remove_if :
 ;----------------------------------------------------------------------
 	mov			rcx, [rdi]
 ;----------------------------------------------------------------------
+_quit :
+	ret
+
 ;======================================================================
 
 _find_and_remove :

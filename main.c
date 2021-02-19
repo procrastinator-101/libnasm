@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/16 18:32:01 by youness          ###   ########.fr       */
+/*   Updated: 2021/02/19 17:14:47 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,17 @@ int main()
 	char	str2[] = "HELLO world!!!\n";
 
 
-	//printf("ret = %lu\n", read(1, ptr, 15));
-	//printf("ret = %lu\n", ft_read(0, ptr, 15));
+	char	ptr[20];
+	//printf("ret = %lu\n", read(1, 0, -2));
+	//printf("ret = %lu\n", ft_read(0, 0, -2));
 	//printf("p = %s\n", ft_strdup(str));
 
 	//printf("ret = %d\n", ft_atoi_base("        \v\t\n\r    15963", "123456789abcdefgrty"));
 
 	//printf("ret = %d\n", convert_to_base("12459973", "0123456789"));
 	
-	printf("ret = %p\n", ft_malloc(-1));
+	//printf("ret = %p\n", ft_malloc(12));
+	//printf("ret = %llu\n", (unsigned long long)ft_malloc(15));
 	
 	printf("error = %s\n", strerror(errno));
 	return (0);

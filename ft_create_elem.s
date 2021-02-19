@@ -1,13 +1,13 @@
-extern malloc
+extern _malloc
 
 section .text
 
-global ft_create_elem
+global _ft_create_elem
 
-ft_create_elem :
+_ft_create_elem :
 	push		rdi
 	mov			rdi, 16
-	call		malloc
+	call		_malloc
 	pop			rdi
 	cmp			rax, 0
 	je			_quit

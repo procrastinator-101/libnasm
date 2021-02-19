@@ -11,10 +11,9 @@ _ft_read:
 	ret
 
 _manage_error:
-	push		r8
-	mov			r8, rax
+	push		rax
 	call		___error
+	pop			r8
 	mov			[rax], r8
 	mov			rax, -1
-	pop			r8
 	ret

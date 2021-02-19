@@ -3,11 +3,9 @@ section .text
 global	_ft_strcmp
 
 _ft_strcmp:
-		push		rcx
 		mov			rcx, -1
 		mov			rax, 0
 		call		_compare
-		pop			rcx
 		ret
 
 _compare:

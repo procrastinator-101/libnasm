@@ -1,12 +1,12 @@
-extern	malloc
+extern	_malloc
 
 section .text
 
-global ft_list_push_front
+global _ft_list_push_front
 
 ;void	ft_list_push_front(t_list **begin_list, void *data);
 ;======================================================================
-ft_list_push_front :
+_ft_list_push_front :
 ;	check if begin_list is null
 ;----------------------------------------------------------------------
 	cmp			rdi, 0
@@ -39,7 +39,7 @@ _quit :
 _ft_create_elem :
 	push		rdi
 	mov			rdi, 16
-	call		malloc
+	call		_malloc
 	pop			rdi
 	cmp			rax, 0
 	je			_allocation_failure
