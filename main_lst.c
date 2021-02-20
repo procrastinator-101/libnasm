@@ -6,12 +6,13 @@
 /*   By: youness <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 15:41:10 by youness           #+#    #+#             */
-/*   Updated: 2021/02/19 14:25:16 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/20 18:43:15 by youness          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <string.h>
+#include <error.h>
 #include <errno.h>
 #include <stdlib.h>
 
@@ -24,6 +25,8 @@ typedef struct		s_list
 
 t_list	*ft_create_elem(void *data);
 void   ft_list_push_front(t_list **begin_list, void *data);
+void	ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)());
+
 
 int main()
 {
@@ -31,11 +34,8 @@ int main()
 	char	str1[] = "lst2";
 	char	str2[] = "lst3";
 	char	str3[] = "lst4";
-	//t_list	*lst = ft_create_elem(str);
-	t_list	*lst = ft_create_elem(str);
-	printf("data = %s\n", (char *)lst->data);
+	t_list	*lst = 0;
 
-	/*
 	ft_list_push_front(&lst, str);
 
 	ft_list_push_front(&lst, str1);
@@ -44,6 +44,7 @@ int main()
 	
 	for (t_list *ptr = lst; ptr; ptr = ptr->next)
 		printf("lst = %s\n", (char *)ptr->data);
-	*/
+
+	ft_list_remove_if(&lst, 0, strcmp);
 	printf("%s\n", strerror(errno));
 }
