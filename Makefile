@@ -6,7 +6,7 @@
 #    By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/02/12 16:45:40 by yarroubi          #+#    #+#              #
-#    Updated: 2021/02/19 18:06:20 by yarroubi         ###   ########.fr        #
+#    Updated: 2021/02/21 18:15:39 by yarroubi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,19 @@ SRC_BONUS = ft_atoi_base.s \
 			ft_list_push_front.s \
 			ft_list_remove_if.s
 
-OBJ = $(SRC:.s=.o)
+ifdef	BONUS
+	OBJ = $(SRC_BONUS:.s=.o)
+else
+	OBJ = $(SRC:.s=.o)
+endif
+
 
 .PHONY :  clean fclean re
 
 all : $(NAME)
+
+bonus :
+	@$(MAKE) BONUS=1 all
 
 $(NAME) : $(OBJ)
 	@ar rc $@ $^
@@ -50,3 +58,12 @@ fclean : clean
 	@rm -rf $(NAME)
 
 re : fclean all
+
+clean_bonus :
+	@$(MAKE) BONUS=1 clean
+
+
+fclean_bonus :
+	@$(MAKE) BONUS=1 fclean
+
+re_bonus : fclean_bonus bonus

@@ -6,13 +6,12 @@
 /*   By: youness <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 15:41:10 by youness           #+#    #+#             */
-/*   Updated: 2021/02/20 18:43:15 by youness          ###   ########.fr       */
+/*   Updated: 2021/02/21 19:00:41 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <string.h>
-#include <error.h>
 #include <errno.h>
 #include <stdlib.h>
 
@@ -45,6 +44,9 @@ int main()
 	for (t_list *ptr = lst; ptr; ptr = ptr->next)
 		printf("lst = %s\n", (char *)ptr->data);
 
-	ft_list_remove_if(&lst, 0, strcmp);
+	printf("\n\n\n");
+	ft_list_remove_if(&lst, "lst2", strcmp);
+	for (t_list *ptr = lst; ptr; ptr = ptr->next)
+		printf("lst = %s\n", (char *)ptr->data);
 	printf("%s\n", strerror(errno));
 }

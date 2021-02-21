@@ -19,7 +19,7 @@ _ft_list_remove_if :
 	
 	push		r12
 	mov			r12, 0						;to hold the ofset to the stored region
-	sub			rsp, 40						;reserve 32 bytes on the stack
+	sub			rsp, 40						;reserve 40 bytes on the stack
 	mov			[rsp + 32], rdi				;to hold the begin_list
 	mov			[rsp + 24], rsi				;to hold the data_ref
 	mov			[rsp + 16], rdx				;to hold the cmp pointer
@@ -27,14 +27,17 @@ _ft_list_remove_if :
 	mov			rdx, [rdi]
 	mov			[rsp], rdx					;to hold the current elem
 	call		_find_and_delete
+	add			rsp, 40
+	pop			r12
+	ret
 
 
 _find_and_delete :
 	add			r12, 8						;add the return address size to the offset
-	mov			rdi, [rsp + r12]			;store the current elem.data in rdi
-	cmp			rdi, 0
+	mov			rdi, [rsp + r12]			;store the current elem in rdi
+	cmp			rdi, 0						;check if the end of the list is reached
 	je			_quit
-	mov			rdi, [rdi]
+	mov			rdi, [rdi]					;store the current elem.data in rdi
 	mov			rdx, [rsp + r12 + 16]		;get the data_ref
 	call		rdx
 	cmp			rax, 0
@@ -68,7 +71,9 @@ _remove_at_front :
 	mov			rdi, [rsp + r12]
 	mov			rcx, [rsp + r12 + 32]
 	mov			rax, [rdi + 8]
-	mov			[rcx], rax
+	mov			[rsp + r12], rax			;update the current elem
+	mov			[rcx], rax					;update the begin_list
 	call		_free
+	call		_find_and_delete
 	ret
 ;======================================================================
