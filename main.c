@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/21 18:39:38 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/22 17:14:41 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ char	*ft_strdup(const char *s1);
 int		ft_atoi_base(char *str, char *base);
 
 
-int		foo(int a, int b, int c);
+///int		foo(int a, int b, int c);
+int		foo(char *str, int a);
 
 int main()
 {
@@ -48,7 +49,8 @@ int main()
 	//printf("ret = %p\n", ft_malloc(12));
 	//printf("ret = %llu\n", (unsigned long long)ft_malloc(15));
 	
-	printf("ret = %d\n", foo(1,2,3));
+	//printf("ret = %d\n", foo(1,2,3));
+	foo("num = %d\n", 3);
 
 	printf("error = %s\n", strerror(errno));
 	return (0);
