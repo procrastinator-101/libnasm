@@ -8,20 +8,20 @@ global	_ft_strdup
 _ft_strdup:
 ;	reserve registers
 ;----------------------------------------------------------------------
-	push		r8
-	push		r9
+	push		r13
+	push		r14
 ;----------------------------------------------------------------------
-;	get the size of str and store it in r8
+;	get the size of str and store it in r13
 ;----------------------------------------------------------------------
 	call		_ft_strlen
 	inc			rax
-	mov			r8, rax
+	mov			r13, rax
 ;----------------------------------------------------------------------
 
-;	allocate size bytes and store the pointer in r9
+;	allocate size bytes and store the pointer in r14
 ;----------------------------------------------------------------------
 	push		rdi
-	mov			rdi, r8
+	mov			rdi, r13
 
 ;	align the stack
 ;----------------------------------------------------------------------
@@ -41,27 +41,26 @@ _ft_strdup:
 
 	pop			rdi
 	jc			_manage_allocation_failure
-	mov			r9, rax
 ;----------------------------------------------------------------------
 
 ;	copy str in the allocated region
 ;----------------------------------------------------------------------
 	mov			rsi, rdi
-	mov			rdi, r9
+	mov			rdi, rax
 	call		_ft_strcpy
 ;----------------------------------------------------------------------
 
 ;	restore the reserved registers and return
 ;----------------------------------------------------------------------
-	pop			r9
-	pop			r8
+	pop			r14
+	pop			r13
 	ret
 ;----------------------------------------------------------------------
 
 _manage_allocation_failure :
 	mov			rax, 0
-	pop			r9
-	pop			r8
+	pop			r14
+	pop			r13
 	ret
 ;======================================================================
 	

@@ -6,19 +6,19 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/23 17:19:12 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/23 17:43:43 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/25 15:02:05 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBASM_H
 # define LIBASM_H
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
+# include <errno.h>
+# include <stdlib.h>
 
-typedef struct		s_list
+typedef struct s_list
 {
 	void			*data;
 	struct s_list	*next;

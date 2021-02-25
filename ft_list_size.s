@@ -5,6 +5,7 @@ global _ft_list_size
 _ft_list_size:
 	mov		rax, 0
 	call	_get_size
+	ret
 
 _get_size:
 	cmp		rdi, 0
