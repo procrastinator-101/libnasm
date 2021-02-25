@@ -6,7 +6,7 @@
 /*   By: youness <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 15:41:10 by youness           #+#    #+#             */
-/*   Updated: 2021/02/25 16:57:27 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/25 17:41:26 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static void	test2_ft_list_functions(void)
 		*num = size - i;
 		ft_list_push_front(&lst, num);
 	}
-	//ft_list_push_front(&lst, &i);
+	ft_list_push_front(&lst, &i);
 	print_lst_num(lst);
 	printf("lst_size = %d\n\n", ft_list_size(lst));
 	ft_list_sort(&lst, compare);

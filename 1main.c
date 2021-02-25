@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/25 14:49:21 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/25 17:40:26 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,21 @@ int		ft_atoi_base(char *str, char *base);
 
 unsigned long long	multi(unsigned long long a, unsigned long long b);
 
+int	my_cmp(int *a, int *b, int (*cmp)(int *, int *));
+
+
+int			compare(int *a, int *b)
+{
+	int	ret;
+
+	ret = 0;
+	if (*a > *b)
+		ret = 1;
+	else if (*a < *b)
+		ret = -1;
+	return (ret);
+}
+
 int main()
 {
 	char	str[] = "hello world!!!";
@@ -37,6 +52,10 @@ int main()
 
 	char	ptr[20];
 	char	ptr2[20];
+
+	int a = 10;
+	int b = 15;
+	printf("ret = %d\n", my_cmp(&a, &b, compare));
 	
 	
 

@@ -1,9 +1,16 @@
 section .text
 
-global _multi
+global _my_cmp
 
-_multi :
-	mov		rax, rdi
-	imul		rsi
-	mov		rax, rdx
+_my_cmp :
+	push	rdi
+	call	rdx
+	pop		rdi
+	cmp		eax, 0
+	jl		_return_g
+	mov		rax, 1
+	ret
+
+_return_g :
+	mov		rax, -1
 	ret
