@@ -6,7 +6,7 @@
 /*   By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 11:17:34 by yarroubi          #+#    #+#             */
-/*   Updated: 2021/02/25 17:40:26 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/02/26 12:24:13 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ int main()
 
 	int a = 10;
 	int b = 15;
-	printf("ret = %d\n", my_cmp(&a, &b, compare));
+	//printf("ret = %d\n", my_cmp(&a, &b, compare));
+	printf("ret = %d\n", ft_atoi_base("      -125f", "0123456789abcdef"));
 	
 	
 

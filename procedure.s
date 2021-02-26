@@ -1,16 +1,20 @@
+
+extern _printf
+global _main
+
 section .text
 
-global _my_cmp
+_main:  push    rbp
+        mov     rbp, rsp
+        mov     rdi, msg
+        mov     rsi, 17
+        lea     rsi, [rel _printf wrt ..gotpcrel]
+        xor     eax, eax
+        call    [rsi]
+        xor     eax, eax
+        leave
+        ret
 
-_my_cmp :
-	push	rdi
-	call	rdx
-	pop		rdi
-	cmp		eax, 0
-	jl		_return_g
-	mov		rax, 1
-	ret
+        section .data
 
-_return_g :
-	mov		rax, -1
-	ret
+msg:    db "printf: 0x%lx", 10, 0

@@ -1,3 +1,5 @@
+extern ___error
+
 section .text
 
 global _ft_atoi_base
@@ -202,9 +204,31 @@ _return_index :
     ret
 
 _return_index_error :
+;	align the stack
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+;----------------------------------------------------------------------
+	push		r12
+	call		_get_alignment_offset
+	mov			r12, rax
+	sub			rsp, rax
+;----------------------------------------------------------------------
+
+	call		___error
+
+;	restore the stack state before adjustement
+;----------------------------------------------------------------------
+	add			rsp, r12
+	pop			r12
+;----------------------------------------------------------------------
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+
+;----------------------------------------------------------------------
+	mov			qword[rax], 22
     mov         rax, -1
     ret
+;----------------------------------------------------------------------
 ;======================================================================
+
 
 ;int	check_base(char *base)
 ;returns -1 if base is invalid, otherwise it length(base number)
@@ -216,20 +240,36 @@ _check_base :
 	ret
 
 _check_base__body :
+;----------------------------------------------------------------------
 	inc			rcx
 	mov			dl, byte[rdi + rcx]
+;----------------------------------------------------------------------
+;----------------------------------------------------------------------
 	cmp			dl, 0
 	je			_check_base_size
+;----------------------------------------------------------------------
+;----------------------------------------------------------------------
 	cmp			dl, 43
 	je			_invalid_base
 	cmp			dl, 45
 	je			_invalid_base
+;----------------------------------------------------------------------
+;----------------------------------------------------------------------
+	push		rdi
+	mov			rdi, rdx
+	call		_is_white_space
+	pop			rdi
+	cmp			rax, 1
+	je			_invalid_base
+;----------------------------------------------------------------------
+;----------------------------------------------------------------------
 	push		rcx
 	mov			rax, 0
 	call		_check_repetitiveness
 	pop			rcx
 	cmp			rax, 1
 	je			_invalid_base
+;----------------------------------------------------------------------
 	call		_check_base__body
 	ret
 
@@ -240,8 +280,30 @@ _check_base_size :
 	ret
 
 _invalid_base :
+;	align the stack
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+;----------------------------------------------------------------------
+	push		r12
+	call		_get_alignment_offset
+	mov			r12, rax
+	sub			rsp, rax
+;----------------------------------------------------------------------
+
+	call		___error
+
+;	restore the stack state before adjustement
+;----------------------------------------------------------------------
+	add			rsp, r12
+	pop			r12
+;----------------------------------------------------------------------
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+
+;----------------------------------------------------------------------
+	mov			qword[rax], 22
 	mov			rax, -1
 	ret
+;----------------------------------------------------------------------
+;======================================================================
 
 
 ;int	check_repetitiveness(char *base + start)
@@ -279,27 +341,62 @@ _traverse_white_spaces :
 
 _traverse_white_spaces__body :
 	inc			rcx
-	mov			dl, byte[rdi + rcx]
-	cmp			dl, 0
+	push		rdi
+	movzx		rdi, byte[rdi + rcx]
+	call		_is_white_space
+	pop			rdi
+	cmp			rax, 0
 	je			_return_counter
-	cmp			dl, 32
-	jne			_check_other_white_spaces
-	call		_traverse_white_spaces__body
-	ret
-
-_check_other_white_spaces :
-	cmp			dl, 8
-	jg			_check_upper_bound
-	call		_return_counter
-	ret
-
-_check_upper_bound :
-	cmp			dl, 13
-	jg			_return_counter
 	call		_traverse_white_spaces__body
 	ret
 
 _return_counter :
 	mov			rax, rcx
+	ret
+;======================================================================
+
+;int	is_white_space(char c)
+;======================================================================
+_is_white_space :
+	cmp			dil, 32
+	je			_return_true
+	cmp			dil, 8
+	jg			_check_upper_bound
+
+_return_false :
+	mov			rax, 0
+	ret
+
+_check_upper_bound :
+	cmp			dil, 13
+	jg			_return_false
+
+
+_return_true :
+	mov			rax, 1
+	ret
+;======================================================================
+
+;	8 if not aligned | 0 otherwise
+;======================================================================
+_get_alignment_offset :
+;	store the rsp % 16 in rax
+;----------------------------------------------------------------------
+	mov			rdx, 0
+	mov			rax, rsp
+	mov			rcx, 16
+	div			rcx
+;----------------------------------------------------------------------
+
+;	rax == 0 -> not aligned (return address of align_stack)
+;----------------------------------------------------------------------
+	cmp			rdx, 0
+	je			_update_offset
+	mov			rax, 0
+	ret
+;----------------------------------------------------------------------
+
+_update_offset :
+	mov			rax, 8
 	ret
 ;======================================================================
