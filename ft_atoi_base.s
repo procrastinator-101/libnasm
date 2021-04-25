@@ -4,7 +4,7 @@ section .text
 
 global _ft_atoi_base
 
-;int	ft_atoi_base(char *num, char *base);
+;int	ft_atoi_base(char *str, char *base);
 ;======================================================================
 _ft_atoi_base :
 ;	preserve the necessary registers
@@ -23,8 +23,14 @@ _ft_atoi_base :
 	je			_manage_error
 ;----------------------------------------------------------------------
 
-;	check if base has the same character twice , '-' or '+'
-;	and store the base number in r8
+;	check if str is an empty string
+;----------------------------------------------------------------------
+	cmp			byte[rdi], 0
+	je			_manage_error
+;----------------------------------------------------------------------
+
+;	check if base has the same character twice , '-' or '+' or a size
+;	less than 2; and store the base number in r8
 ;----------------------------------------------------------------------
 	push		rdi
 	mov			rdi, rsi
@@ -50,10 +56,18 @@ _ft_atoi_base :
 	call		_traverse_sign
 ;----------------------------------------------------------------------
 
-;	start the conversion
+;	check if str contains only sign or/and whitespaces
+;----------------------------------------------------------------------
+	cmp			byte[rdi + rcx], 0
+	je			_manage_error
+;----------------------------------------------------------------------
+
+;	convert str and check for related errors
 ;----------------------------------------------------------------------
 	mov			r9, 0
 	call		_convert_to_base
+	cmp			r9, -1
+	je			_manage_error
 ;----------------------------------------------------------------------
 
 ;	set the sign
@@ -70,7 +84,15 @@ _quit :
 	ret
 
 _manage_error :
+;----------------------------------------------------------------------
 	mov			rax, 0
+;----------------------------------------------------------------------
+;	set invalid argument errno
+;----------------------------------------------------------------------
+	mov			rdi, 22
+	call		_set_errno
+;----------------------------------------------------------------------
+;----------------------------------------------------------------------
 	pop			r10
 	pop			r9
 	pop			r8
@@ -91,7 +113,7 @@ _set_sign :
 	ret
 ;======================================================================
 
-;set r10 to -1 if negative | 0 otherwise
+;set r10 to -1 if [rdi + r10] == '-'
 ;and increment rcx if there is a sign
 ;======================================================================
 _traverse_sign :
@@ -109,19 +131,18 @@ _traverse_minus :
 
 _traverse_plus :
 	inc			rcx
-	mov			r10, 0
 	ret
 ;======================================================================
 
-
-;convert c to the right index and add it to ret
+;return value in rax
+;in case of error, r9 is set to -1
 ;======================================================================
 _convert_to_base:
 ;	reserve registers
 ;----------------------------------------------------------------------
-	push			rcx
-	push			rdi
-	push			rsi
+	push			rcx			;index of the character in str to convert in base
+	push			rdi			;str
+	push			rsi			;base
 ;----------------------------------------------------------------------
 
 ;	getting the index of str[rcx]
@@ -170,19 +191,20 @@ _return_converted_base :
 
 
 _manage_conv_base_error :
-;	set return value to 0 and quit
+;	set return value to 0 and r9 to -1 then quit
 ;----------------------------------------------------------------------
-    mov         rax, 0
+	mov			r9, -1
     pop         rsi
     pop         rdi
     pop         rcx
     ret
+;----------------------------------------------------------------------
 ;======================================================================
 
 
 ;int	get_index(char *str, char c);
+;returns the index of c in str | if not found -1 is returned
 ;======================================================================
-
 _get_index :
     mov         rcx, -1
     mov         rdx, 0
@@ -204,45 +226,23 @@ _return_index :
     ret
 
 _return_index_error :
-;	align the stack
-;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-;----------------------------------------------------------------------
-	push		r12
-	call		_get_alignment_offset
-	mov			r12, rax
-	sub			rsp, rax
-;----------------------------------------------------------------------
-
-	call		___error
-
-;	restore the stack state before adjustement
-;----------------------------------------------------------------------
-	add			rsp, r12
-	pop			r12
-;----------------------------------------------------------------------
-;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-
-;----------------------------------------------------------------------
-	mov			qword[rax], 22
-    mov         rax, -1
-    ret
-;----------------------------------------------------------------------
+	mov			rax, -1
+	ret
 ;======================================================================
 
 
 ;int	check_base(char *base)
-;returns -1 if base is invalid, otherwise it length(base number)
+;returns -1 if base is invalid, otherwise its length(base number)
 ;======================================================================
 _check_base :
 	mov			rcx, -1
-	mov			rdx, 0
 	call		_check_base__body
 	ret
 
 _check_base__body :
 ;----------------------------------------------------------------------
 	inc			rcx
-	mov			dl, byte[rdi + rcx]
+	movzx		rdx, byte[rdi + rcx]
 ;----------------------------------------------------------------------
 ;----------------------------------------------------------------------
 	cmp			dl, 0
@@ -280,34 +280,12 @@ _check_base_size :
 	ret
 
 _invalid_base :
-;	align the stack
-;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-;----------------------------------------------------------------------
-	push		r12
-	call		_get_alignment_offset
-	mov			r12, rax
-	sub			rsp, rax
-;----------------------------------------------------------------------
-
-	call		___error
-
-;	restore the stack state before adjustement
-;----------------------------------------------------------------------
-	add			rsp, r12
-	pop			r12
-;----------------------------------------------------------------------
-;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-
-;----------------------------------------------------------------------
-	mov			qword[rax], 22
 	mov			rax, -1
 	ret
-;----------------------------------------------------------------------
 ;======================================================================
 
 
-;int	check_repetitiveness(char *base + start)
-;returns 1 if base[start] appears twice | 0 otherwise
+;returns 1 if rdi[rcx] appears twice | 0 otherwise
 ;======================================================================
 _check_repetitiveness :
 	inc			rcx
@@ -368,14 +346,47 @@ _return_false :
 	ret
 
 _check_upper_bound :
-	cmp			dil, 13
+	cmp			dil, 14
 	jg			_return_false
-
 
 _return_true :
 	mov			rax, 1
 	ret
 ;======================================================================
+
+
+;	set errno to rdi, rax value remains unchanged
+;======================================================================
+_set_errno :
+;----------------------------------------------------------------------
+	push		rax
+;----------------------------------------------------------------------
+
+;	align the stack
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+;----------------------------------------------------------------------
+	push		r12
+	call		_get_alignment_offset
+	mov			r12, rax
+	sub			rsp, rax
+;----------------------------------------------------------------------
+
+	call		___error
+
+;	restore the stack state before adjustement
+;----------------------------------------------------------------------
+	add			rsp, r12
+	pop			r12
+;----------------------------------------------------------------------
+;IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+
+;----------------------------------------------------------------------
+	mov			[rax], rdi
+	pop			rax
+	ret
+;----------------------------------------------------------------------
+;======================================================================
+
 
 ;	8 if not aligned | 0 otherwise
 ;======================================================================

@@ -6,7 +6,7 @@
 /*   By: youness <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 15:41:10 by youness           #+#    #+#             */
-/*   Updated: 2021/02/25 18:14:24 by yarroubi         ###   ########.fr       */
+/*   Updated: 2021/04/25 13:32:45 by yarroubi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 static void	print_lst_str(t_list *tail)
 {
+	printf("\n=====================================================\n");
 	while (tail)
 	{
 		printf("lst = %s\n", (char *)tail->data);
 		tail = tail->next;
 	}
-	printf("\n\n");
+	printf("=====================================================\n\n");
 }
 
 static void	test1_ft_list_functions(void)
@@ -40,13 +41,14 @@ static void	test1_ft_list_functions(void)
 			str[3] = 2 + '0';
 		ft_list_push_front(&lst, str);
 	}
+	ft_list_push_front(&lst, "lst2");
 	print_lst_str(lst);
 	printf("lst_size = %d\n\n", ft_list_size(lst));
 	ft_list_sort(&lst, ft_strcmp);
 	print_lst_str(lst);
 	i = -1;
 	str = ft_strdup("lst0");
-	while (++i < 3)
+	while (++i < size)
 	{
 		str[3] = i + '0';
 		ft_list_remove_if(&lst, str, ft_strcmp);
@@ -56,12 +58,13 @@ static void	test1_ft_list_functions(void)
 
 static void	print_lst_num(t_list *tail)
 {
+	printf("\n=====================================================\n");
 	while (tail)
 	{
 		printf("num = %d\n", *((int *)tail->data));
 		tail = tail->next;
 	}
-	printf("\n\n");
+	printf("=====================================================\n\n");
 }
 
 int			compare(int *a, int *b)
@@ -85,18 +88,20 @@ static void	test2_ft_list_functions(void)
 
 	i = -1;
 	lst = 0;
-	size = 10;
+	size = 9;
 	while (++i < size)
 	{
 		num = malloc(sizeof(int));
 		*num = size - i;
 		ft_list_push_front(&lst, num);
 	}
-	ft_list_push_front(&lst, &i);
+	ft_list_push_front(&lst, &size);
 	print_lst_num(lst);
+	
 	printf("lst_size = %d\n\n", ft_list_size(lst));
 	ft_list_sort(&lst, compare);
 	print_lst_num(lst);
+	
 	i = -1;
 	while (++i < size)
 		ft_list_remove_if(&lst, &i, compare);
@@ -107,6 +112,7 @@ int			main(void)
 {
 	size_t	ret;
 	char	buffer[20];
+
 	test1_ft_list_functions();
 	test2_ft_list_functions();
 	printf("len = %lu\n", ft_strlen("123456789"));

@@ -49,7 +49,6 @@ _quit :
 
 ;======================================================================
 _ft_bubble_sort :
-;update the start node
 ;----------------------------------------------------------------------
 	mov			r14, 0				;initialise the previous elem to null
 	mov			r13, [r12]			;initialise the current elem to the first elem

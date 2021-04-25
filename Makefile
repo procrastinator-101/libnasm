@@ -6,7 +6,7 @@
 #    By: yarroubi <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/02/12 16:45:40 by yarroubi          #+#    #+#              #
-#    Updated: 2021/02/22 18:09:27 by yarroubi         ###   ########.fr        #
+#    Updated: 2021/04/24 13:58:36 by yarroubi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,14 +26,13 @@ SRC	= ft_read.s \
 	  ft_write.s
 
 SRC_BONUS = ft_atoi_base.s \
-			ft_create_elem.s \
 			ft_list_push_front.s \
 			ft_list_remove_if.s \
 			ft_list_size.s \
 			ft_list_sort.s
 
 ifdef	BONUS
-	OBJ = $(SRC_BONUS:.s=.o) $(SRC:.s=.o)
+	OBJ = $(SRC:.s=.o) $(SRC_BONUS:.s=.o)
 else
 	OBJ = $(SRC:.s=.o)
 endif
